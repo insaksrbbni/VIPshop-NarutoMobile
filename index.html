@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privilege Shop VIP – Naruto Mobile</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-void:    #0a0b10;
+    --bg-deep:    #0f1018;
+    --bg-card:    #14161f;
+    --bg-raised:  #1b1e2b;
+    --border:     #252837;
+    --border-glow:#ff6b1a44;
+
+    --orange:     #ff6b1a;
+    --orange-dim: #c84d08;
+    --yellow:     #ffd54f;
+    --red:        #e53935;
+    --blue:       #3d5afe;
+    --blue-bright:#6979f8;
+    --pink:       #f06292;
+    --green:      #69f0ae;
+
+    --text-hi:    #f0e9d8;
+    --text-mid:   #9da3b4;
+    --text-lo:    #565c70;
+
+    --radius:     12px;
+    --radius-sm:  8px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Exo 2', sans-serif;
+    background: var(--bg-void);
+    color: var(--text-hi);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 10% 20%, #ff6b1a12 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 90% 80%, #3d5afe0d 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* ── KUNAI DIVIDER ── */
+  .kunai-divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 20px 0 12px;
+    color: var(--orange);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+  }
+  .kunai-divider::before { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--orange-dim)); }
+  .kunai-divider::after  { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--orange-dim), transparent); }
+
+  /* ── WRAPPER ── */
+  .wrapper {
+    position: relative; z-index: 1;
+    max-width: 760px; margin: 0 auto;
+    padding: 20px 16px 40px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    padding: 28px 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-wrap {
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    flex-wrap: wrap;
+  }
+  .logo-img {
+    height: 72px; width: auto;
+    filter: drop-shadow(0 0 12px #ff6b1a66);
+  }
+  .header-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700; line-height: 1.2; text-align: left;
+  }
+  .header-title .top-line {
+    color: var(--orange);
+    text-shadow: 0 0 20px #ff6b1a88;
+    font-size: clamp(22px, 5vw, 30px);
+  }
+  .header-title .sub-line {
+    color: var(--text-mid);
+    font-size: clamp(11px, 2.5vw, 13px);
+    letter-spacing: 3px; font-weight: 500;
+  }
+  .chakra-badge {
+    display: inline-block; margin-top: 10px;
+    background: linear-gradient(135deg, #ff6b1a22, #3d5afe22);
+    border: 1px solid var(--border);
+    color: var(--text-mid);
+    font-size: 11px; letter-spacing: 1.5px;
+    padding: 4px 14px; border-radius: 20px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px; margin-bottom: 16px;
+    transition: border-color .2s;
+  }
+  .card:hover { border-color: #2e3146; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px; font-weight: 700;
+    color: var(--orange);
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-label .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--orange); box-shadow: 0 0 8px var(--orange);
+  }
+
+  /* ── FORM GRID ── */
+  .form-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  }
+  @media (max-width: 480px) { .form-grid { grid-template-columns: 1fr; } }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  label.field-label {
+    font-size: 12px; font-weight: 600;
+    color: var(--text-mid); letter-spacing: 0.5px;
+  }
+  label.field-label span.unit { color: var(--yellow); font-weight: 500; margin-left: 4px; }
+
+  input[type="number"] {
+    width: 100%;
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-hi);
+    font-family: 'Exo 2', sans-serif;
+    font-size: 15px; font-weight: 500;
+    padding: 10px 14px; outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    -moz-appearance: textfield;
+  }
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  input:focus {
+    border-color: var(--orange);
+    box-shadow: 0 0 0 3px #ff6b1a20;
+  }
+
+  /* ── RANK BUTTONS ── */
+  .rank-btn-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .rank-btn {
+    position: relative;
+    background: var(--bg-raised);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 10px;
+    cursor: pointer;
+    text-align: center;
+    transition: all .2s;
+    user-select: none;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .rank-btn:hover { border-color: var(--orange-dim); }
+  .rank-btn.active {
+    border-color: var(--orange);
+    background: linear-gradient(135deg, #1f1408, #1a120a);
+    box-shadow: 0 0 14px #ff6b1a30, inset 0 0 12px #ff6b1a0a;
+  }
+  .rank-btn.active-blue {
+    border-color: var(--blue-bright);
+    background: linear-gradient(135deg, #0d1033, #0a0d28);
+    box-shadow: 0 0 14px #3d5afe30, inset 0 0 12px #3d5afe0a;
+  }
+  .rank-badge {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px; font-weight: 700; line-height: 1;
+  }
+  .rank-btn.active .rank-badge { color: var(--orange); text-shadow: 0 0 10px #ff6b1a88; }
+  .rank-btn.active-blue .rank-badge { color: var(--blue-bright); }
+  .rank-btn:not(.active):not(.active-blue) .rank-badge { color: var(--text-mid); }
+  .rank-name {
+    font-size: 10px; font-weight: 600; letter-spacing: 1px;
+    color: var(--text-lo); text-transform: uppercase;
+  }
+  .rank-btn.active .rank-name { color: var(--orange); }
+  .rank-btn.active-blue .rank-name { color: var(--blue-bright); }
+  .rank-frags {
+    font-size: 12px; color: var(--text-mid); font-weight: 500;
+  }
+  .rank-btn.active .rank-frags { color: var(--yellow); }
+  .rank-btn.active-blue .rank-frags { color: #90caf9; }
+  .rank-check {
+    position: absolute; top: 6px; right: 7px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--orange);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px; color: #fff;
+    opacity: 0; transform: scale(0);
+    transition: all .2s;
+  }
+  .rank-btn.active .rank-check,
+  .rank-btn.active-blue .rank-check {
+    opacity: 1; transform: scale(1);
+  }
+  .rank-btn.active-blue .rank-check { background: var(--blue-bright); }
+
+  /* ── TOGGLE SWITCH ── */
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px; cursor: pointer; user-select: none;
+    transition: border-color .2s;
+  }
+  .toggle-row:hover { border-color: var(--orange); }
+  .toggle-info { display: flex; flex-direction: column; gap: 2px; }
+  .toggle-info .t-title { font-size: 14px; font-weight: 600; color: var(--text-hi); }
+  .toggle-info .t-sub   { font-size: 11px; color: var(--text-mid); }
+  .toggle-info .t-sub .active-text   { color: var(--green); }
+  .toggle-info .t-sub .inactive-text { color: var(--text-lo); }
+
+  .switch { position: relative; width: 52px; height: 28px; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; cursor: pointer; inset: 0;
+    background: var(--bg-void); border: 1px solid var(--border);
+    border-radius: 28px; transition: .3s;
+  }
+  .slider::before {
+    content: ''; position: absolute;
+    width: 20px; height: 20px; left: 3px; bottom: 3px;
+    background: var(--text-lo); border-radius: 50%; transition: .3s;
+  }
+  input:checked + .slider {
+    background: linear-gradient(135deg, var(--orange-dim), var(--orange));
+    border-color: var(--orange); box-shadow: 0 0 10px #ff6b1a55;
+  }
+  input:checked + .slider::before { transform: translateX(24px); background: #fff; }
+
+  /* ── PRICE PREVIEW ── */
+  .price-tag {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;
+  }
+  .ptag {
+    background: var(--bg-raised); border: 1px solid var(--border);
+    border-radius: 6px; padding: 6px 12px;
+    font-size: 12px; color: var(--text-mid);
+  }
+  .ptag strong { color: var(--yellow); font-size: 14px; }
+  .ptag.hl { border-color: var(--orange-dim); }
+  .ptag.hl strong { color: var(--orange); }
+
+  /* ── RESULTS ── */
+  .result-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+  @media (max-width: 520px) { .result-grid { grid-template-columns: 1fr; } }
+
+  .result-card {
+    background: var(--bg-raised); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .result-card.full   { grid-column: 1 / -1; }
+  .result-card.accent { border-color: var(--orange-dim); }
+  .result-card.success{ border-color: #1b5e20; }
+  .result-card.danger { border-color: #b71c1c; }
+  .result-card.info   { border-color: #1a237e; }
+
+  .rc-label { font-size: 11px; font-weight: 600; color: var(--text-lo); letter-spacing: 1px; text-transform: uppercase; }
+  .rc-value { font-family: 'Rajdhani', sans-serif; font-size: 26px; font-weight: 700; line-height: 1; color: var(--text-hi); }
+  .rc-value.orange { color: var(--orange); text-shadow: 0 0 12px #ff6b1a66; }
+  .rc-value.green  { color: var(--green);  text-shadow: 0 0 12px #69f0ae44; }
+  .rc-value.red    { color: #ef5350; }
+  .rc-value.blue   { color: var(--blue-bright); }
+  .rc-value.yellow { color: var(--yellow); }
+  .rc-sub { font-size: 11px; color: var(--text-lo); margin-top: 2px; }
+
+  /* ── BREAKDOWN TABLE ── */
+  .breakdown {
+    background: var(--bg-raised); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); overflow: hidden; margin-top: 4px;
+  }
+  .breakdown table { width: 100%; border-collapse: collapse; }
+  .breakdown th {
+    background: #1f2233; font-size: 10px; font-weight: 700;
+    color: var(--text-lo); letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 8px 12px; text-align: left;
+  }
+  .breakdown td {
+    padding: 9px 12px; font-size: 13px; color: var(--text-mid);
+    border-top: 1px solid var(--border); vertical-align: top;
+  }
+  .breakdown td strong { color: var(--text-hi); font-weight: 600; }
+  .breakdown td .hl  { color: var(--orange); font-weight: 700; }
+  .breakdown td .hl2 { color: var(--blue-bright); font-weight: 700; }
+  .breakdown td .hlg { color: var(--green); font-weight: 700; }
+  .breakdown tr.total-row td { color: var(--yellow); font-weight: 700; background: #1a1500; }
+
+  /* ── FORMULA NOTE ── */
+  .formula-note {
+    background: #0d1020; border: 1px solid #1a2040;
+    border-radius: var(--radius-sm); padding: 12px 14px;
+    font-size: 12px; color: var(--text-lo); line-height: 1.8;
+    margin-top: 8px;
+  }
+  .formula-note .f-title { color: var(--blue-bright); font-weight: 700; margin-bottom: 4px; font-size: 11px; letter-spacing: 1px; }
+  .formula-note code { color: var(--yellow); background: #1a1a00; padding: 1px 5px; border-radius: 3px; font-size: 11px; }
+
+  /* ── WARNING ── */
+  .warning-box {
+    background: #1a1200; border: 1px solid #7c6200;
+    border-left: 3px solid var(--yellow);
+    border-radius: var(--radius-sm); padding: 12px 16px;
+    display: flex; gap: 12px; align-items: flex-start; margin-bottom: 16px;
+  }
+  .warning-box .icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .warning-box p { font-size: 13px; color: #ffe082; line-height: 1.5; }
+  .warning-box p strong { color: var(--yellow); }
+
+  /* ── NO RESULT ── */
+  .no-result { text-align: center; padding: 32px 16px; color: var(--text-lo); font-size: 14px; }
+  .no-result .nr-icon { font-size: 40px; margin-bottom: 10px; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center; border-top: 1px solid var(--border);
+    padding: 20px 16px; margin-top: 20px;
+    color: var(--text-lo); font-size: 12px; letter-spacing: 1px;
+  }
+  footer .copy { color: var(--orange); font-weight: 700; }
+  footer .ver  { margin-top: 4px; font-size: 10px; }
+
+  .hidden { display: none !important; }
+  .mt-8 { margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-wrap">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/NNM-logo.png/320px-NNM-logo.png"
+         alt="Naruto Mobile" class="logo-img"
+         onerror="this.style.display='none'">
+    <div class="header-title">
+      <div class="top-line">Privilege Shop VIP</div>
+      <div class="sub-line">NARUTO MOBILE · KALKULATOR FRAGMENT</div>
+    </div>
+  </div>
+  <div class="chakra-badge">⚡ Real-time Calculation · Chakra Mode Active ⚡</div>
+</header>
+
+<div class="wrapper">
+
+  <!-- INPUT SECTION -->
+  <div class="card">
+    <div class="section-label"><span class="dot"></span>Data Akun</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="field-label">Saldo Gold Saat Ini <span class="unit">Gold</span></label>
+        <input type="number" id="currentGold" placeholder="Contoh: 50000" min="0">
+      </div>
+      <div class="form-group">
+        <label class="field-label">Fragmen yang Dimiliki <span class="unit">pcs</span></label>
+        <input type="number" id="ownedFragments" placeholder="Contoh: 0" min="0">
+      </div>
+      <div class="form-group">
+        <label class="field-label">Batas Beli Harian <span class="unit">kali/hari</span></label>
+        <input type="number" id="dailyLimit" value="6" min="1" max="99">
+      </div>
+    </div>
+  </div>
+
+  <!-- RANK BUTTONS -->
+  <div class="card">
+    <div class="section-label"><span class="dot"></span>Target Karakter</div>
+    <div class="rank-btn-group">
+
+      <div class="rank-btn active" data-frags="100" data-color="orange" onclick="selectRank(this)">
+        <span class="rank-check">✓</span>
+        <div class="rank-badge">S</div>
+        <div class="rank-name">Rank S</div>
+        <div class="rank-frags">100 Fragmen</div>
+      </div>
+
+      <div class="rank-btn" data-frags="40" data-color="blue" onclick="selectRank(this)">
+        <span class="rank-check">✓</span>
+        <div class="rank-badge">A</div>
+        <div class="rank-name">Rank A</div>
+        <div class="rank-frags">40 Fragmen</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DISCOUNT TOGGLE -->
+  <div class="card">
+    <div class="section-label"><span class="dot"></span>Status Harga</div>
+    <label class="toggle-row" for="discountToggle">
+      <div class="toggle-info">
+        <div class="t-title" id="toggleTitle">Harga Normal</div>
+        <div class="t-sub" id="toggleSub">
+          <span class="inactive-text">680 Gold / fragmen · Bonus 680 Tiket / fragmen</span>
+        </div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="discountToggle">
+        <span class="slider"></span>
+      </label>
+    </label>
+    <div class="price-tag mt-8">
+      <div class="ptag hl"><strong id="prevGold">680</strong> Gold / fragmen</div>
+      <div class="ptag"><strong id="prevTicket">680</strong> Tiket bonus / fragmen</div>
+      <div class="ptag"><strong>2.080</strong> Tiket → 1 fragmen (Toko Poin)</div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="resultsSection">
+    <div class="kunai-divider">Hasil Simulasi</div>
+    <div id="noResult" class="no-result card">
+      <div class="nr-icon">🥷</div>
+      <p>Masukkan data di atas untuk memulai kalkulasi.</p>
+    </div>
+    <div id="resultContent" class="hidden">
+
+      <div class="result-grid">
+        <div class="result-card accent">
+          <div class="rc-label">Kekurangan Fragmen</div>
+          <div class="rc-value orange" id="rMissing">—</div>
+          <div class="rc-sub" id="rMissingSub">fragmen yang harus dicari</div>
+        </div>
+        <div class="result-card info">
+          <div class="rc-label">Total Gold Dihabiskan</div>
+          <div class="rc-value blue" id="rTotalGold">—</div>
+          <div class="rc-sub">untuk membeli fragmen</div>
+        </div>
+        <div class="result-card" id="rDaysCard">
+          <div class="rc-label">Estimasi Waktu</div>
+          <div class="rc-value yellow" id="rDays">—</div>
+          <div class="rc-sub" id="rDaysSub">hari cicilan harian</div>
+        </div>
+        <div class="result-card" id="rSisaCard">
+          <div class="rc-label">Sisa Gold Akun</div>
+          <div class="rc-value" id="rSisaGold">—</div>
+          <div class="rc-sub">setelah summon berhasil</div>
+        </div>
+      </div>
+
+      <!-- BREAKDOWN -->
+      <div class="card mt-8">
+        <div class="section-label"><span class="dot"></span>Rincian Kombinasi Pembelian</div>
+        <div class="breakdown">
+          <table>
+            <thead>
+              <tr>
+                <th>Cara Mendapat</th>
+                <th>Jumlah</th>
+                <th>Biaya / Keterangan</th>
+              </tr>
+            </thead>
+            <tbody id="breakdownBody"></tbody>
+          </table>
+        </div>
+        <div class="formula-note" id="formulaNote"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- WARNING -->
+  <div class="warning-box">
+    <div class="icon">⚠️</div>
+    <p><strong>Perhatian:</strong> Tiket bonus akan di-reset setiap tanggal <strong>1 jam 05:00 pagi</strong>. Pastikan kamu menukar tiketmu sebelum reset agar tidak hangus dan simulasi tetap akurat!</p>
+  </div>
+
+</div><!-- /wrapper -->
+
+<footer>
+  <div>Privilege Shop VIP Calculator · Naruto Mobile 火影忍者</div>
+  <div class="copy">✦ Created By YINSA ✦</div>
+  <div class="ver">v1.0 · Kalkulasi Real-Time · Dark Mode</div>
+</footer>
+
+<script>
+  const FRAG_POINTS = 2080; // tiket per 1 fragmen di toko poin
+  let selectedFrags = 100;  // default Rank S
+
+  /* ── RANK BUTTON SELECTION ── */
+  function selectRank(el) {
+    document.querySelectorAll('.rank-btn').forEach(b => {
+      b.classList.remove('active', 'active-blue');
+    });
+    const color = el.dataset.color;
+    el.classList.add(color === 'blue' ? 'active-blue' : 'active');
+    selectedFrags = parseInt(el.dataset.frags);
+    calculate();
+  }
+
+  /* ── FORMAT NUMBER ── */
+  function fmt(n) {
+    return Math.round(n).toLocaleString('id-ID');
+  }
+
+  /* ── GET PARAMS ── */
+  function getParams() {
+    const discount = document.getElementById('discountToggle').checked;
+    return {
+      currentGold:    parseFloat(document.getElementById('currentGold').value)    || 0,
+      ownedFragments: parseFloat(document.getElementById('ownedFragments').value)  || 0,
+      targetFrags:    selectedFrags,
+      dailyLimit:     parseFloat(document.getElementById('dailyLimit').value)      || 6,
+      discount,
+      pricePerFrag: discount ? 578 : 680,
+      bonusPerFrag: discount ? 578 : 680,
+    };
+  }
+
+  /* ── UPDATE PRICE TAGS ── */
+  function updatePriceTags(p) {
+    document.getElementById('prevGold').textContent   = fmt(p.pricePerFrag);
+    document.getElementById('prevTicket').textContent = fmt(p.bonusPerFrag);
+    if (p.discount) {
+      document.getElementById('toggleTitle').textContent = '✦ Diskon 8.5折 Aktif';
+      document.getElementById('toggleSub').innerHTML =
+        '<span class="active-text">578 Gold / fragmen · Bonus 578 Tiket / fragmen</span>';
+    } else {
+      document.getElementById('toggleTitle').textContent = 'Harga Normal';
+      document.getElementById('toggleSub').innerHTML =
+        '<span class="inactive-text">680 Gold / fragmen · Bonus 680 Tiket / fragmen</span>';
+    }
+  }
+
+  /* ── MAIN CALCULATION ── */
+  function calculate() {
+    const p = getParams();
+    updatePriceTags(p);
+
+    const noRes = document.getElementById('noResult');
+    const resC  = document.getElementById('resultContent');
+    const missing = Math.max(0, p.targetFrags - p.ownedFragments);
+
+    // show placeholder if no data entered
+    if (p.currentGold === 0 && p.ownedFragments === 0) {
+      noRes.classList.remove('hidden');
+      resC.classList.add('hidden');
+      return;
+    }
+
+    noRes.classList.add('hidden');
+    resC.classList.remove('hidden');
+
+    document.getElementById('rMissing').textContent = missing + ' fragmen';
+
+    // ── Already enough fragments ──
+    if (missing === 0) {
+      document.getElementById('rTotalGold').textContent = '0';
+      document.getElementById('rDays').textContent = '0';
+      document.getElementById('rDaysSub').textContent = 'Sudah cukup! 🎉';
+      document.getElementById('rSisaGold').textContent = fmt(p.currentGold) + ' Gold';
+      document.getElementById('rSisaGold').className = 'rc-value green';
+      document.getElementById('rSisaCard').className = 'result-card success';
+      document.getElementById('breakdownBody').innerHTML =
+        `<tr><td colspan="3" style="text-align:center;color:var(--green);padding:20px">
+          🎉 Fragmen sudah cukup! Langsung summon!
+        </td></tr>`;
+      document.getElementById('formulaNote').innerHTML = '';
+      return;
+    }
+
+    /*
+     * ALGORITMA (sesuai referensi):
+     * Iterasi X dari 0 → missing (jumlah fragmen beli pakai Gold)
+     *   tickets = X × bonusPerFrag
+     *   Y = floor(tickets / 2080)          ← fragmen dari tukar tiket
+     *   if (X + Y) >= missing → solusi ditemukan, STOP (X terkecil = Gold paling hemat)
+     */
+    let bestX = missing, bestY = 0;
+    let found = false;
+
+    for (let x = 0; x <= missing + 500; x++) {
+      const tickets = x * p.bonusPerFrag;
+      const y = Math.floor(tickets / FRAG_POINTS);
+      if (x + y >= missing) {
+        bestX = x;
+        bestY = y;
+        found = true;
+        break;
+      }
+    }
+
+    // fallback: beli semua pakai Gold
+    if (!found) { bestX = missing; bestY = 0; }
+
+    const totalTickets = bestX * p.bonusPerFrag;
+    const sisaTickets  = totalTickets - (bestY * FRAG_POINTS);
+    const totalCost    = bestX * p.pricePerFrag;
+    const totalGot     = bestX + bestY;
+    const lebih        = totalGot - missing;
+    const sisaGold     = p.currentGold - totalCost;
+    const days         = Math.ceil(bestX / p.dailyLimit);
+
+    // ── Fill result cards ──
+    document.getElementById('rTotalGold').textContent = fmt(totalCost);
+    document.getElementById('rDays').textContent      = days;
+    document.getElementById('rDaysSub').textContent   =
+      `hari (${fmt(bestX)} beli ÷ ${p.dailyLimit}/hari)`;
+
+    const sisaEl   = document.getElementById('rSisaGold');
+    const sisaCard = document.getElementById('rSisaCard');
+    sisaEl.textContent = fmt(sisaGold) + ' Gold';
+    if (sisaGold < 0) {
+      sisaEl.className   = 'rc-value red';
+      sisaCard.className = 'result-card danger';
+    } else {
+      sisaEl.className   = 'rc-value green';
+      sisaCard.className = 'result-card success';
+    }
+
+    // ── Breakdown table ──
+    const rows = [
+      {
+        cls:   '',
+        label: `Beli pakai Gold <span style="color:var(--text-lo);font-size:11px">(${fmt(p.pricePerFrag)} Gold/frg)</span>`,
+        qty:   `<strong>${fmt(bestX)} fragmen</strong>`,
+        info:  `<span class="hl">${fmt(totalCost)}</span> Gold`
+      },
+      {
+        cls:   '',
+        label: `Tiket Bonus Terkumpul`,
+        qty:   `<strong>${fmt(totalTickets)} Tiket</strong>`,
+        info:  `${fmt(bestX)} × ${fmt(p.bonusPerFrag)} Tiket`
+      },
+      {
+        cls:   '',
+        label: `Tukar di Toko Poin <span style="color:var(--text-lo);font-size:11px">(2.080 Tiket/frg)</span>`,
+        qty:   `<span class="hl2">${fmt(bestY)} fragmen</span>`,
+        info:  `${fmt(totalTickets)} ÷ 2.080 = ${fmt(bestY)} frg <span style="color:var(--text-lo)">(sisa ${fmt(sisaTickets)} tiket)</span>`
+      },
+      {
+        cls:   'total-row',
+        label: `<strong>Total Fragmen Didapat</strong>`,
+        qty:   `<strong>${fmt(totalGot)} fragmen</strong> ${lebih > 0 ? `<span style="color:var(--green);font-size:11px">(+${lebih} lebih ✓)</span>` : '<span style="color:var(--green)">✓ Pas!</span>'}`,
+        info:  `<strong>${fmt(totalCost)} Gold</strong>`
+      },
+    ];
+
+    document.getElementById('breakdownBody').innerHTML =
+      rows.map(r =>
+        `<tr class="${r.cls}"><td>${r.label}</td><td>${r.qty}</td><td>${r.info}</td></tr>`
+      ).join('');
+
+    // ── Formula note ──
+    document.getElementById('formulaNote').innerHTML = `
+      <div class="f-title">📐 DETAIL KALKULASI</div>
+      <div>Kekurangan: <code>${p.targetFrags} - ${p.ownedFragments} = ${missing} fragmen</code></div>
+      <div>Beli Gold: <code>${fmt(bestX)} × ${fmt(p.pricePerFrag)} = ${fmt(totalCost)} Gold</code></div>
+      <div>Tiket didapat: <code>${fmt(bestX)} × ${fmt(p.bonusPerFrag)} = ${fmt(totalTickets)} Tiket</code></div>
+      <div>Fragmen dari Tiket: <code>floor(${fmt(totalTickets)} ÷ 2.080) = ${fmt(bestY)} fragmen</code></div>
+      <div>Total: <code>${fmt(bestX)} (Gold) + ${fmt(bestY)} (Tiket) = ${fmt(totalGot)} fragmen</code> ${lebih > 0 ? `— kelebihan ${lebih} frg` : ''}</div>
+    `;
+  }
+
+  // ── Event listeners ──
+  ['currentGold', 'ownedFragments', 'dailyLimit', 'discountToggle'].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('input',  calculate);
+    el.addEventListener('change', calculate);
+  });
+
+  calculate();
+</script>
+</body>
+</html>
