@@ -280,7 +280,7 @@
   </button>
   <button class="lang-btn" onclick="setLang('en')" id="btn-en">
     <span class="lang-flag">🇬🇧</span> EN
-  </button>
+  </butto>
 </div>
 
 <header>
@@ -293,7 +293,7 @@
       <div class="sub-line" id="hSubLine">NARUTO MOBILE · KALKULATOR FRAGMENT</div>
     </div>
   </div>
-  <div class="chakra-badge" id="hBadge">Real-time Calculation</div>
+  <div class="chakra-badge" id="hBadge">⚡ Real-time Calculation · Chakra Mode Active ⚡</div>
 </header>
 
 <div class="wrapper">
@@ -321,13 +321,13 @@
   <div class="card">
     <div class="section-label"><span class="dot"></span><span data-t="secTarget">Target Karakter</span></div>
     <div class="rank-btn-group">
-      <div class="rank-btn active" data-frags="100" data-color="orange" onclick="selectRank(this)">
+      <div class="rank-btn active" data-frags="100" data-price-normal="680" data-price-disc="578" data-color="orange" onclick="selectRank(this)">
         <span class="rank-check">✓</span>
         <div class="rank-badge">S</div>
         <div class="rank-name">Rank S</div>
         <div class="rank-frags">100 <span data-t="frags">Fragmen</span></div>
       </div>
-      <div class="rank-btn" data-frags="40" data-color="blue" onclick="selectRank(this)">
+      <div class="rank-btn" data-frags="40" data-price-normal="420" data-price-disc="357" data-color="blue" onclick="selectRank(this)">
         <span class="rank-check">✓</span>
         <div class="rank-badge">A</div>
         <div class="rank-name">Rank A</div>
@@ -429,7 +429,7 @@
 const T = {
   id: {
     hSubLine:       'NARUTO MOBILE · KALKULATOR FRAGMENT',
-    hBadge:         '⚡ Kalkulasi Real-Time ⚡',
+    hBadge:         '⚡ Kalkulasi Real-Time · Chakra Mode Aktif ⚡',
     secAccount:     'Data Akun',
     labelGold:      'Saldo Gold Saat Ini',
     labelGoldPh:    'Contoh: 50000',
@@ -488,7 +488,7 @@ const T = {
   },
   en: {
     hSubLine:       'NARUTO MOBILE · FRAGMENT CALCULATOR',
-    hBadge:         '⚡ Real-Time Calculation ⚡',
+    hBadge:         '⚡ Real-Time Calculation · Chakra Mode Active ⚡',
     secAccount:     'Account Data',
     labelGold:      'Current Gold Balance',
     labelGoldPh:    'e.g. 50000',
@@ -669,8 +669,10 @@ const T = {
    STATE
 ════════════════════════════════════════ */
 const FRAG_POINTS = 2080;
-let selectedFrags = 100;
-let currentLang   = 'id';
+let selectedFrags      = 100;
+let selectedPriceNormal = 680;
+let selectedPriceDisc   = 578;
+let currentLang        = 'id';
 
 /* ════════════════════════════════════════
    LANGUAGE
@@ -707,7 +709,9 @@ function setLang(lang) {
 function selectRank(el) {
   document.querySelectorAll('.rank-btn').forEach(b => b.classList.remove('active', 'active-blue'));
   el.classList.add(el.dataset.color === 'blue' ? 'active-blue' : 'active');
-  selectedFrags = parseInt(el.dataset.frags);
+  selectedFrags       = parseInt(el.dataset.frags);
+  selectedPriceNormal = parseInt(el.dataset.priceNormal);
+  selectedPriceDisc   = parseInt(el.dataset.priceDisc);
   calculate();
 }
 
@@ -728,11 +732,11 @@ function updatePriceTags(p) {
   if (p.discount) {
     document.getElementById('toggleTitle').textContent = t('priceDiscount');
     document.getElementById('toggleSub').innerHTML =
-      `<span class="active-text">${t('priceDiscSub')}</span>`;
+      `<span class="active-text">${fmt(p.pricePerFrag)} Gold / ${t('frag')} · Bonus ${fmt(p.bonusPerFrag)} ${t('rowTicketUnit')} / ${t('frag')}</span>`;
   } else {
     document.getElementById('toggleTitle').textContent = t('priceNormal');
     document.getElementById('toggleSub').innerHTML =
-      `<span class="inactive-text">${t('priceNormalSub')}</span>`;
+      `<span class="inactive-text">${fmt(p.pricePerFrag)} Gold / ${t('frag')} · Bonus ${fmt(p.bonusPerFrag)} ${t('rowTicketUnit')} / ${t('frag')}</span>`;
   }
 }
 
@@ -747,8 +751,8 @@ function calculate() {
     targetFrags:    selectedFrags,
     dailyLimit:     parseFloat(document.getElementById('dailyLimit').value)      || 6,
     discount,
-    pricePerFrag: discount ? 578 : 680,
-    bonusPerFrag: discount ? 578 : 680,
+    pricePerFrag: discount ? selectedPriceDisc   : selectedPriceNormal,
+    bonusPerFrag: discount ? selectedPriceDisc   : selectedPriceNormal,
   };
 
   updatePriceTags(p);
